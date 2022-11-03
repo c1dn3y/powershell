@@ -1,0 +1,64 @@
+Notes - Oct 06
+---------------
+Error Handling Concepts : 
+TRY - CATCH
+Try Catch - Handles only the Terminating Error. 
+Try 
+{
+	Line of codes
+}
+Catch 
+{
+	Action to be taken, when there is an Error in the Try Block
+}
+Finally
+{
+	Footer - Executed in all the scenarios. 
+}
+-------------------------------------
+Error with Exceptions : 
+$error - Array Automatic Variable. 
+The latest Error is the First Error in the Array. 
+The Latest ERror is represented as $Error[0]. 
+$error[0] | select * >> Look for the Exception Property
+---------------------------------------------
+SuccessMachines_10_06_2022_08_41.txt
+get-date -format MM_dd_yyyy_hh_mm
+-----------------------------------------------
+Trap - The script should continue even when there is a Terminating Error. 
+When we have Catch and Trap together the Trap has the priority if written inside the TRY. 
+If the Trap is written outside the Try, the Catch takes priority. 
+------------------------------------------
+Functions : 
+
+Goal : How to make Functions/Variables permanent ?
+	Profiles : 
+	Description                  Name
+  ---------------------------- ---------------------------------
+  Current User, Current Host   $PROFILE
+  Current User, Current Host   $PROFILE.CurrentUserCurrentHost
+  Current User, All Hosts      $PROFILE.CurrentUserAllHosts
+  All Users, Current Host      $PROFILE.AllUsersCurrentHost
+  All Users, All Hosts         $PROFILE.AllUsersAllHosts
+-----------------------------------------
+If both the profile are available Global executes first and then local loads. 
+----------------------------------------------  
+Make 4 Functions to be permanent : 
+	1. Execute-Service
+	2. Execute-Process
+	3. Execute-Hotfix
+	4. Execute-Eventlogs
+----------------------------------------------
+Parameter creation : 
+Parameterizing the Function : 
+get-help about_Functions_advanced_parameters
+		1. Mandatory
+		2. ValidateSet
+		3. HelpMessage
+		4. ValidateRange
+--------------------------------------------------
+Comment Based Help :
+-------------------------		
+get-help about_Comment_based_help : 
+a single typo on any of the Keywords will eliminate the whole Help Structure. 
+--------------------------------------------------

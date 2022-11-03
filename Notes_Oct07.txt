@@ -1,0 +1,91 @@
+Notes - Oct 07
+----------------
+Modules : 
+Intro : 
+	Collection of cmdlets, Functions, Variables and Aliases bundled together and saved as .psm1 file. 
+Get-Module - shows all the list of modules connected to the Session. 
+How to handle the On-Premises Module ?
+	Active Directory : RSAT - Remote Server Admin Tool. 
+	Exchange Server - New-Pssession, Import-PSsession. 
+get-service -computername LON-DC1	
+---------------------------------------------------------------------------------
+Module path - $ENV:PSmodulepath -split ";"
+get-module 
+get-module -listavailable  >> list the modules according to the Location. 
+------------------------------------------------------
+How to Handle the cloud Modules ? 
+Nuget provider - INstall	
+Find-Module 
+Install-Module Msonline 
+Installed on teh ProgramFiles. 
+Import-module MSOnline 
+Get-InstalledModule  > Show only the Modules installed via the PSGallery. 
+------------------------------------------------
+UnTrusted Repository 
+get-PSrepository
+Set-PsRepository -Name PSGallery -installationpolicy Trusted
+-----------------------------------------------------------
+How to create our own module ?
+Place all your Functions, Aliases in a Script and save the script in any of the module folder with Extension .psm1. 
+Warning about Unapproved Verb.. 
+Get-verb. 
+Import-module WindowsOps -DisableNamechecking 
+------------------------------------------------------------------------
+WMI - Windows Management Instrumentation : 
+CIM - Common information Model
+Library - 
+Get-wmiobject -list  >> Library 
+Get-wmiobject -list *Keyboard* 
+Books - Classes 
+Get-wmiobject -class Win32_Keyboard
+
+Q1 : Find the Version of the Operating system ?
+Ans : get-Wmiobject -class Win32_Operatingsystem
+Q2 : Find the processor Model ?i5, i7 etc 
+Ans : get-wmiobject -class Win32_Processor
+Q3 : Find information about the BIOS ? 
+Ans : Get-WMiobject -class win32_BIOS
+Q4 : Find the information about the Laptop Battery (Run this on the Local Machine) ?
+Ans : Get-wmiobject -class Win32_Battery. 
+Q5 : Find the information about the Drives on the machines. 
+Eg : C Drive Total space, C Drive Freespace etc. 
+Ans : get-wmiobject -class Win32_LogicalDisk
+Q6 : Find when was your computer Last Rebooted ? 
+Get-CIMinstance -class Win32_Operatingsystem 
+-------------------------------------
+Task - Perform the Uptime calculation on ServerCollection. 
+Handle the Error
+----------------------------------------------
+Non-Terminating Errors : 
+	How to identify ? 
+		1. Place it within TRY CATCH 
+		2. $ERROR variable - Terminating - White Font ;;;;;;; Non-Terminating - Red Font. 
+---------------------------------
+Q1 : How to handle a Non-Terminating Error ? 
+Q2 : How Commonparameters added to my Functions ?
+	It is added by PS automatically, not by the developer. 
+-----------------------------------
+Common PArameters  :
+	The set of parameter which you can use with all the cmdlets. 
+	Erroraction 
+	Verbost : Running commentary. 
+------------------------------------------------------
+On the Disk Managemement Report 
+	1. Take the Report on to a CSV file. 
+	2. Perform Disk Management on the Server collection. 
+	3. Handle the Errors. 
+-----------------------------------------------------
+Cmdlet can be created only on C# Lang. 
+Member property wil also be created on C# Lang. 
+Member Noteproperty can be created in PS. 	
+---------------------------------------------------------------
+On the CUSTOM HEALTH Report :
+	1. Take the Report on to a CSV file. 
+	2. Perform Disk Management on the Server collection. 
+	3. Handle the Errors. 	
+-------------------------------------------------
+HashTable - Associative Array with Key value pair. 
+Syntax : @{ } 	
+Array : Collection of items with similar or different types. 
+Syntax : @()
+----------------------------------------------------------

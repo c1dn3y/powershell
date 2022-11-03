@@ -1,0 +1,177 @@
+Notes - Oct 04
+------------------
+Q1 : Find all the Application Events which are logged in the Year 2021. ?
+Ans : get-eventlog -logname application | where-object {$_.TimeGenerated -gt "12/31/2020 23:59" -and $_.TimeGenerated -lt "01/01/2022" -and $_.EntryType -eq "Error"}
+-------------------------------------------------
+OR - TRUE when Either 1 result or all the Results are TRUE. (ADDITION)
+0 0 - 0
+0 1 - 1
+1 0 - 1 
+1 1 - 1
+Q1 : Find all the Services which are having the Displayname starting with Application + Displayname starting with Remote. 
+Ans : get-service | where-object {$_.Displayname -like "Application*" -or $_.Displayname -like "Remote*"}
+Q2 : From all the Application Events - Filter only Error + Warning
+Ans : get-eventlog -logname application | where-object {$_.EntryType -eq "Error" -or $_.EntryType -eq "Warning"}
+
+Q3 : Find all the process with the Handles greater than 500 and less than 600
+With the above results ADD the list of process with the processname "Powershell" ?
+Ans : get-process | where-object {$_.handles -gt 500 -and $_.handles -lt 600 -or $_.Processname -eq "Powershell"}
+-----------------------------------------------------
+Goal : Filter only specific properties on the Command result : 
+Formatting Options : 
+Format-table : Formats the output as a table wth specific properties. 
+	Shows the result completely without shrinking. 
+	should be always at the end of the command. 
+----------
+Format-List - Learning command 
+------------------------------------------
+Q1 : Find all the Services which are having the StartType Automatic and Displayname starting with Windows. 
+Final result should contain only the Status, Displayname, Name of the MAchine, StartType. 	
+Ans : get-service | where-object {$_.starttype -like "Automatic" -and $_.Displayname -like "Windows*"} | format-table Status, Displayname, Machinename , StartType
+Q2 : Find all the process with the Handles greater than 500 and less than 600. 
+The final output should contain only the Processname, Handles, When it was started. 
+Ans :  get-process | where-object {$_.handles -gt 500 -and $_.handles -lt 600} | format-table Processname, Handles, StartTime
+Q3 : Find all the Hotfixes which are haiving the Description "Update" and installed after Jan 01 2021.
+The final output should contain only Name of the machine, Description, HotfixID, Installedon, HyperLink (https://)
+Ans : get-hotfix | where-object {$_.Description -eq "Update" -and $_.installedOn -gt "2021/01/01"} | format-table PScomputername, description, Installedon, Caption
+Q4 : Find all the Application ERROR Events which are logged in the Year 2021. ?
+The final output should contain only Time*, Source, EntryType 
+Ans : get-eventlog -logname application | where-object {$_.TimeGenerated -gt "12/31/2020 23:59" -and $_.TimeGenerated -lt "01/01/2022" -and $_.EntryType -eq "Error"} | format-table Time*, Source, EntryType 
+-------------------------------------------------------------------------------------------------
+Sort-object : 
+	Ascending is default sort. 
+	Use -Descending for reverse sort.
+	Use Sorting before FOrmat-Table. 
+	alphabets, Date Time can also be sorted. 
+--------------------------------------------------	
+get-alias
+	get-alias gsv --> Find the command if you knw the Alias. 
+	get-alias -definition get-Service --> Find the Alias if you know the Command. 
+----------------------------------------------------	
+Powershell Scripting : 
+	Collection of Cmdlets, Parameters, Operators, Comparison Ops, Logical Ops bundled together as a .ps1 file.
+Integrated Scripting Environment : 	
+Execution Policy : 
+	Will take effect ONLY for saved scripts.
+	1. Restricted - Default policy for client OS. Allow individual cmdlets, blocks Scripts. 
+	2. Allsigned  - Every scripts (including Local Scripts) require a Digital Sign
+	3. RemoteSigned - Downloaded scripts needs to be signed. Local Scripts will run. 
+	4. Unrestricted - All scripts will run. Provide a Warning to the User. 
+	5. ByPass       - All scripts will run. No warning No prompts.. 
+-----------------------------
+Get-Executionpolicy
+Set-ExecutionPolicy Restricted  
+get-Help Set-ExecutionPolicy -parameter Scope
+Set-ExecutionPolicy Restricted  -scope Process >>> Will change only the current window. 	
+----------------------------------------------
+Line Spacing : 
+` - BackTick - Escape/Special Characters.    
+	`n - New Line spacing 
+	`t - Horizontal tabl spacing. 
+	`  - Line continuation. 
+-------------------------------------------------
+Input statements : 
+Read-host - Takes input from the user. 
+Use -AsSecureString for taking secured inputs. 
+---------------------------------------------------------
+Variables : 
+	A variable is a unit of memory in which values are stored.	
+	Anything that starts with $ Symbol is called a Variables.
+Types of variables : 
+	1. User created Variable : 
+		Who created this  : User 
+		Who will maintain this :
+		What is the lifetime of this Variable : Within the same window. Till the PS window is open. 
+		****** How to make a Variable Permanent **********
+---------------------------------------------
+	2. Automatic Variable : 
+		Who created this  : Powershell 
+		Who will maintain this : Powershell 
+		Does the user/admin have access to change : NO 
+		What is the lifetime of this Variable : Permanent. 
+get-help about_automatic_Variables
+-------------------------------------------------------------		
+	3. Preference Variables : 	
+		Who created this  : Powershell 
+		Who will maintain this : Powershell / Admin
+		What is the lifetime of this Variable : Limited to the current session. 
+get-help about_preference_Variables
+--------------------------------------------------------------------
+Difference between Single Quotes and Double Quotes : 
+SQ - Does not know how to process the variables. 
+DQ - Know how to process the variable. 
+----------------------------------------------------------
+Single Line Comment - #
+<#
+Multi
+Line
+ Comment
+#>		
+----------------------------------------------------
+clear the screen
+Title - AD Operations Script. 
+Title - AD User Creation 
+Q1 - Enter the First Name ?
+Q2 - Enter the Last Name ?
+Q3 - Enter the Displayname  ?
+Q4 - Enter the Password ?
+Create the User account in Enabled state, Changepasswordatlogon enabled .
+Provide a msg to the user saying the account is created. 
+----------------------------------------------------------------------
+Title - Create an AD Group 
+Q1 - Enter the Group Name ? 
+Q2 - ENter the Group scope (Domain local/Global/Universal)
+Q3 - Enter the Group Category (Security/Distribution)
+Create the group and provide ack to the user. 
+-------------------------------------------------------------------------------
+Title - Add a member to the group ?
+Q1 - Enter the Group Name ? 
+Q2 - Enter the UserNAme ? 
+Provide an ack to the user. 
+--------------------------------------------------------------
+Title - Remove a member from the group ?
+Q1 - Enter the Group Name ? 
+Q2 - Enter the UserNAme ? 
+Provide an ack to the user. 
+------------------------------------------------------------
+Conditional Statements  : 
+IF-ELSEIF-ELSE : 
+	1. After IF and ELSEIF writing the condition is mandatory. 
+	2. After ELSE, not writing the condition is Mandatory. 
+	3. ELSEIF and ELSE blocks are Optional. 
+	if ($a -eq 10)
+	{
+		write-host "This is TEN"
+	}
+	4. You can have more than 1 ELSEIF blocks. 
+	5. ELSE should be always at the last. 
+	-------------------------------------------
+clear the screen 
+Title - Arithmetic Operations 
+Print Menu 1 - Addition 
+Menu 2 - Subtraction 
+Menu 3 - Multiplication 
+Menu 4 - Division.
+$choice = i/p - Enter your choice (1/2/3/4) - 9
+i/p - Enter Number1 ? 
+i/p - Enter Number2 ?
+if ($choice -eq 1)
+{
+	PErform Addition and Print the Result. 
+}
+elseif ($choice -eq 2)
+{
+		PErform Subtraction and Print the Result. 
+}
+elseif ($choice -eq 3)
+{
+		PErform Multiplication and Print the Result. 
+}
+elseif ($choice -eq 4)
+{
+	Perform Division and print the Resul 
+}
+else 
+{
+	Print invalid input 
+}

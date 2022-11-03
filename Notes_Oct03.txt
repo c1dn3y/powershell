@@ -1,0 +1,156 @@
+Notes - Oct 03
+--------------
+Get-command - 
+Design Structure - Verb-Noun
+Work on CSV. 
+Wildcard Character : 
+	1. Starting with - Text*
+	2. Containing    - *Text* 
+	3. Ending with   - *Text 
+Q1 : Find all the cmdlets that contain the word CSV 
+Get-command *help*
+get-help import-csv 
+------------------------------------------------
+Help Scenarios
+		1. Complete Help : Update-Help 
+		2. Incomplete Help : Update-Help was not ran earlier. 
+		3. Prompt for an Update : System is requesting to run Update-help.. 
+----------------------------------------
+Update-Help : 
+			1. Run as Administration. 
+			2. Internet connection.
+1. Update of a command - get-help get-eventlog, Get-help Get-service 
+2. Update of a Topic - get-help About_Operators, get-help about_Parameters			
+--------------------------------------------
+get-process 
+get-package 
+------------------
+Q1 : Why Get-event is not showing any result ?
+Ans : This cmdlet gets all the EVent from the Powershell Event queue for the current session. 
+Q2 : What is Get-eventlog asking for ?			
+
+-------------------------------------
+SYNTAX : 
+Technical boundary of the cmdlet. 
+-------------------------------------------------------
+Additional Learning : 
+get-help Get-EventLog -examples
+get-help Get-EventLog -Online 
+get-help get-eventlog -showwindow
+----------------------------------------------------------
+Parameter : 
+	Supply Input to the command.. 
+	Anything that starts with - Hyphen inside the SYNTAX called Parameters
+
+get-eventlog -logname Application	
+get-eventlog  - cmdlet 
+-logname      - Parameter Name 
+Application   - Parameter Value (Argument)
+----------------------
+Single Square bracket - Mandatory Parameter
+Double Square Bracket - Optional Parameter
+
+get-help get-eventlog -parameter Logname >> Look for the Required details. 
+---------------------------------------------------------
+Q1 : Filter only the Latest 10 Event logs from the Application container. 
+Get-eventlog -logname application -Newest 10
+Q2 : Filter all the Application logs which are logged between 06 AM to 7AM. 
+Ans : Get-eventlog -logname application -after 06:00 -before 07:00
+Q3 : Filter all the Application logs which are logged between  13th OCt 2021 1 PM  to 02 PM .
+Ans : Get-eventlog -logname application -after "10/13/2021 06:00" -before "10/13/2021 07:00"
+Ans : Get-eventlog -logname application -after 10/13/2021.06:00 -before 10/13/2021.07:00
+---------------------------------------------------------------------------------------
+Q4 : Create a user by filling the details like FName, LName, DisName, UPN, Changepasswordatlogon 
+Ans : New-ADuser -Name Test5User5 -givenname Test1 -surName User1 -Displayname "Test5 User5" -UserprincipalName Test5User5@Adatum.com -Changepasswordatlogon $True
+------------------------------------------------------------------------------
+New-ADuser -Name Test6User6 -givenname Test6 -surName User6 -Displayname "Test6 User6" -UserprincipalName Test6User6@Adatum.com -Changepasswordatlogon $True -AccountPassword (Read-host "Enter the PAssword ?" -asSecureString) -enabled $True 
+-------------------------------------------------------------------------------------------------
+Goal : From the Application container, Filter only the Error events.
+Properties / Headers / Address :
+Q1 : Create a AD Group named GKTraining with scope - Universal and Type - Distribution. 
+Ans : New-ADGroup -Name GKTraining -Groupscope Universal -groupcategory Distribution 
+Q2 : From the Application container filter all the Source starting with Microsoft. 
+Ans : get-eventlog -logname application -source Microsoft*
+Q3 : Get all the Services which are having the Displayname starting with Application ?
+Ans : Get-service -Displayname Application*
+Q4 : get all the process with the processname containing the word "host"?
+Ans : get-process -processname *host* 
+Q5 : Find all the Hotfixes which are having the Description "Update"?
+Ans : get-hotfix -description Update 
+------------------------------------------------------------
+Goal :  Find all the Services which are having the Status "Running" ?
+| - Pipeline - Operator - Take the output of 1 command and provide as an input for the next command. 
+Get-service - does not know how to filter according to the property called STATUS. 
+Keypoint  :
+	The pipeline shouldn't be at the beginning or the end. 
+Where-object : Filter according to the Property. 
+
+get-service | where-object {$_.Status -eq "Running"}
+
+get-service   - cmdlet 
+|             - Operator
+where-object  - cmdlet 
+$_            - Variable - Storage - Store one object at a time. 
+.             - Property Operator
+Status        - Property
+-eq           - Comparison Operator.
+Running       - search string. 
+""            - Mandatory for String and Optional for Integers
+{}            - Enclose the Whole query 
+--------------------------------------------------------------------
+Q1 : Find the service which has the NAme WinRM ? (Use the Where-object method) 
+Get-Service -Name WinRm 
+Ans : Get-Service | where-object {$_.Name -eq "WinRM"}
+Q2 : Find all the process with the processName "Winlogon"?
+Ans :  Get-process | where-object {$_.Name -eq "Winlogon"}
+Q3 : Check if the Hotfix KB319998 is installed on the Machine LON-DC1 ?
+Ans : get-hotfix -computername LON-DC1 | where-object {$_.HotfixID -eq "KB319998"}
+Q4 : Take the Latest 500 Application logs. Filter only the Error events. 
+Ans : Get-eventlog -logname application -newest 500 | where-object {$_.EntryTYpe -eq "Error"}
+Q5 : Get the ADGroup with the Name GKTraining ?
+Ans : Get-ADGroup -filter * | where-object {$_.Name -eq "GKTraining"}
+-----------------------------------------------------------------------
+get-ADGroup -filter 'Name -eq "GKTraining"'
+get-ADgroup -identity GKtraining
+------------------------------------------------------------------------
+  Equality      -eq            equals - Exact match 
+                -ne            not equals - Opp of Exact match 
+                -gt            greater than  - Numbers and Dates
+                -ge            greater than or equal
+                -lt            less than
+                -le            less than or equal
+  Matching      -like          string matches wildcard pattern
+                -notlike       string does not match wildcard pattern
+--------------------------------------------
+Q1 : Find all the Processes that are having the Handles greater than 1500. 
+Ans : get-process | where-object {$_.Handles -gt "1500"}
+Q2 : Find all teh Hotfixes which are Installed after 10th Oct 2021. 
+Ans : get-hotfix | where-object {$_.installedOn -lt "10/10/2021"}
+Like - Wildcard Operator 
+    1. Starting with - Text*
+	2. Containing    - *Text* 
+	3. Ending with   - *Text 
+Q3 : Find all the Hotfixes which are having the HotfixID starting with KB5. 
+Ans : get-hotfix | where-object {$_.HotfixID -like "KB5*"}
+Q4 : Take the latest 500 Application logs. Filter all the Messages containing the word "License"?	
+Ans : Get-eventlog -logname application -newest 500 | where-object {$_.message -like "*License*"}
+------------------------------------------------------------------------------------------
+A Like operator without a * will behave as an EQ Operator
+---------------------------------------------------------------------
+Logical Operators : 
+AND : TRUE when both the conditions are TRUE. 
+0 0 = 0 
+0 1 = 0
+1 0 - 0
+1 1 - 1
+Q1 : Find all the Services which are having the Status Runing and the Displayname starting with Remote)
+get-service | where-object {$_.Status -eq "Running" -and $_.Displayname -like "Remote*"}
+Q2 : Find all the process with the Handles greater than 500 and less than 700. 
+Ans : get-process | where-object {$_.Handles -gt 500 -and $_.Handles -lt 700}
+Q3 : Find all the Hotfixes which are haiving the Description "Update" and installed after Jan 01 2021. 
+Ans : get-hotfix | where-object {$_.Description -eq "Update" -and $_.installedOn -gt "2021/01/01"}
+Q4 : Find all the packages which has the Name containing the letter "P" and the providerName is msi.. 
+Ans : get-package | where-object {$_.Name -like "*P*" -and $_.ProviderName -eq "msi"}
+----------------------------------------------
+get-History
+----------------------------------------------

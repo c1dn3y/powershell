@@ -1,0 +1,111 @@
+Notes - Oct 05
+---------------
+-in - Comparison Operator. 
+AD Operations script : 
+4 Menus 
+	1. AD USer creation. 
+	2. AD Group creation. 
+	3. Adding Member to group. 
+	4. Removing Member from the group. 
+---------------------------------------
+count the total number of Services : 
+(get-service).count 
+Count the running services 
+(get-service  | ? {$_.Status -eq "Running"}).count
+Count the Stopped Services 
+(get-service  | ? {$_.Status -eq "Stopped"}).count
+-------------------------------------------------------------
+Do_WHILE : 
+	1. The statements are executed first and then the condition is Evaluated. 
+	2. Loop - condition is TRUE // EXIT - condition is FALSE. 
+	3. The DO Loop will work atleast ONCE. 
+-------------------------
+Switch Statements : 
+		IF Vs Switch 
+Adv :
+		1. Jump directly to the respective condition.. If will go in a sequential order. 
+		2. Performance is good.
+Disadv : 
+		1. On simple comparisons
+-------------------------------------
+10K Logs - Application container
+get-eventlog -logname Application -Newest 500 | ? {$_.EntryType -eq "Error"} - 10K - take First 500 - Filter all the ERROR.
+get-eventlog -logname Application -Newest 500 -EntryType Error - 10K Logs - 2000 Errors - First 500 Errors.		
+------------------------------------
+Measure-command 
+Use Measure-command with -Expression. 
+Measure-command -expression {get-eventlog -logname Application -Newest 500 -EntryType Error} 
+---------------------------------------------
+Multiplication Table : 
+10 X 1 = 10
+10 X 2 = 20 
+.
+.
+.
+10 X 20 = 200. 
+FOR - <Init>; <Condition>; <Repeat>
+<Init>  - Initialization - 1
+<Condition> - 20
+<Repeat> - Increment of 1
+-----------------------------------
+<Init>   - Will work only during the FIRST Iteration.
+<Condition> - The loop will work only when the condition is TRUE. 
+<Repeat> - Will start working only from the SECOND ITeration
+------------------------
+get-help about_Assignment_operators
+++, =, +=
+------------------------------------
+WHILE Loops : 
+Same as FOR Loops, but is very simple and flexible.
+WH : Condition is evaluated FIRST and statement nxt. 
+DW : Statements are executed FIRST and then the condition. 
+WH : Not necessary to run ONCE. 
+DW : Run atleast ONCE. 
+------------------------------------------------
+File Handling Techniques : 
+Import-csv  : smart command 
+Import as a table. 
+If the Number of properties are more tha 4, the command will automatically convert it to a list
+pwd - Present working directory. 
+---------------------------------------------------
+get-content - raw format of the file. 
+------------------------------------------------
+Export-csv : 
+	Q1 : What is it on the First line ? 
+	TypeInformation
+	Q2 : From where it is fetching ?
+	Get-Member  - In depth Learning command 
+	Q3 : How to eliminte the row 1 ?
+	Use -NotypeInforaiton Parameter 
+	Q4 : How to get only Selected properties 
+	Select-object : knows how to take the o/p of 1 command provide as an i/p to the next command. 
+-----------------------------------
+43 get-service | ? {$_.DisplayName -like "Remote*"} | Export-csv 
+   C:\users\Administrator.ADATUM\Desktop\Oct05\ServiceExport.csv
+  44 get-service | ? {$_.DisplayName -like "Remote*"} | Export-csv
+     C:\users\Administrator.ADATUM\Desktop\Oct05\ServiceExport.csv -NoTypeInformation
+  45 get-service | ? {$_.DisplayName -like "Remote*"} | ft Status, StartType, DisplayName | Export-csv
+     C:\users\Administrator.ADATUM\Desktop\Oct05\ServiceExport.csv -NoTypeInformation
+  46 get-service | ? {$_.DisplayName -like "Remote*"} | select Status, StartType, DisplayName | Export-csv
+     C:\users\Administrator.ADATUM\Desktop\Oct05\ServiceExport.csv -NoTypeInformation
+  47 get-service | ? {$_.DisplayName -like "Remote*"} | select Status, StartType, DisplayName | out-file
+     C:\users\Administrator.ADATUM\Desktop\Oct05\ServiceExport.csv
+  48 get-service | ? {$_.DisplayName -like "Remote*"} | select Status, StartType, DisplayName | out-file
+     C:\users\Administrator.ADATUM\Desktop\Oct05\ServiceExport.csv
+  49 get-service | ? {$_.DisplayName -like "Remote*"} | select Status, StartType, DisplayName | out-file
+     C:\users\Administrator.ADATUM\Desktop\Oct05\ServiceExport.txt
+--------------------------------------------
+out-File : 
+Not in a formatted way, but the result looks better in a Notepad file. 
+---------------------------------------------------------
+FOREACH - 
+Item       - One object at a time. 
+Collection - Complete CSV file brought in to PS and stored on to a variable. 
+--------------------------------------------------------------------
+Find all the Services which are having the Displayname starting with Remote on 500 Machines. 
+Step 1 : Perform the task on the local Machine :
+get-service | ? {$_.DisplayName -like "Remote*"} 
+Step 2 : Perform the task on 1 Remote Machine :
+get-service -computerName LON-DC1 | ? {$_.DisplayName -like "Remote*"} 
+Step 3 : Perform the task on bulk machines. 
+get-service -computerName $item.servername | ? {$_.DisplayName -like "Remote*"} 
